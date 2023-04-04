@@ -1,6 +1,6 @@
 name: lint_python
 on:
-  pull_requests:
+  pull_request:
     branchs:
       - staging
       
