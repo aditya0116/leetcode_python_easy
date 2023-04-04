@@ -1,0 +1,29 @@
+on:
+  push:
+    branches:
+      - main
+jobs:
+  sync-branch:
+    name: Reverse Merge
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+
+      - name: 'Wait for status checks'
+        id: waitforstatuschecks
+        uses: "WyriHaximus/github-action-wait-for-status@v1.6.0"
+        with:
+          ignoreActions: Reverse Merge
+          checkInterval: 30
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: Merge main -> staging
+        uses: devmasx/merge-branch@master
+        if: steps.waitforstatuschecks.outputs.status == 'success'
+        with:
+          type: now
+          from_branch: main
+          message: "Merge from main to staging"
+          target_branch: staging
+          github_token: ${{ github.token }}
